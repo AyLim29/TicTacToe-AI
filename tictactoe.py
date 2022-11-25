@@ -54,7 +54,7 @@ class TicTacToe:
     def __init__(self) -> None:
         self.init_posit = TTT_State([], [])
     
-    def apply_move(self, state: TTT_State, move: tuple, turn) -> None:
+    def apply_move(self, state: TTT_State, move: int, turn) -> TTT_State:
         if move not in state.o_posit and move not in state.x_posit:
             return state
         if turn == X:
@@ -63,13 +63,8 @@ class TicTacToe:
             return TTT_State(state.o_posit + [move], state.x_posit, X)
     
     def check_win(self, state: TTT_State) -> int:
-        # Winning Positions
-        horizontal = [[(i, j) for j in range(3)] for i in range(3)]
-        vertical = [[(j, i) for j in range(3)] for i in range(3)]
-        diagonal = [[(0,0),(1,1),(2,2)], [(0,2),(1,1),(2,0)]]
-        
         # Check if x_posit/ o_posit contains winning positions
-        for win_pos in horizontal + vertical + diagonal:
+        for win_pos in HORIZONTAL + VERTICAL + DIAGONAL:
             if all(elem in state.x_posit for elem in win_pos):
                 return X
             if all(elem in state.o_posit for elem in win_pos):
@@ -83,11 +78,71 @@ class TicTacToe:
     
 class UltimateTicTacToe:
     def __init__(self) -> None:
-        self.init_posit = [TicTacToe() for _ in range(9)]
+        self.init_posit = UTTT_State([TicTacToe() for _ in range(9)], [i for i in range(9)])
+        
+    def apply_move(self, state: UTTT_State, move: int, turn) -> UTTT_State:
+        # move: (small game index, move in small game)
+        #TODO Check for valid move
+        
+        cell = move[1]
+        new_state = state.small_games[move[0]].deepcopy()
+        new_state = TicTacToe.apply_move(new_state, move[1], turn)
+        new_small_games = state.small_games[0:cell] + [new_state] + state.small_games[cell + 1:]
+        # new_state = UTTT_State(new_small_games, n)
+        
+        #TODO calculate new valid games
+        
+        new_valid_games = []
+        # Check if the move results in a solved game 
+        if TicTacToe.check_win(new_small_games[cell]) != NO_WIN:
+            # Check which other small games it can go to::
+            for i in range(9):
+                if TicTacToe.check_win(new_small_games[i]) == NO_WIN:
+                    new_valid_games.append(i)
+        else:
+            new_valid_games = [move[1]]
+            
+        
+        return UTTT_State(new_small_games, new_valid_games)
+        
+    def check_win(self, state: UTTT_State) -> int:
+        small_games = state.small_games
+        for positions in HORIZONTAL + VERTICAL + DIAGONAL:
+            win_X = True
+            win_O = True
+            for pos in positions:
+                # Check if all pos are X or O
+                pos_winner = TicTacToe.check_win(small_games[pos])
+                if pos_winner != X:
+                    win_X = False
+                elif pos_winner != O:
+                    win_O = False
+            
+            if win_X == True:
+                return X
+            if win_O == True:
+                return O
+        
+        # Check if all are not NO_WIN then
+        draw = True
+        for i in range(9):
+            if TicTacToe.check_win(small_games[i]) == NO_WIN:
+                draw = False
+                    
+        if draw == True:
+            return DRAW
+        
+        return NO_WIN
+                
+    
     
     
 if __name__ == "__main__":
-    ttt = TicTacToe()
-    print(["DRAW", "X", "NO_WIN", "O"][ttt.check_win(TTT_State([[(j, i) for j in range(3)] for i in range(3)][2], [(1,1)], X))])
+    # ttt = TicTacToe()
+    # print(["DRAW", "X", "NO_WIN", "O"][ttt.check_win(TTT_State([[(j, i) for j in range(3)] for i in range(3)][2], [(1,1)], X))])
     
+    
+    
+    
+    pass
         
