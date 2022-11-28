@@ -1,13 +1,20 @@
-from tictactoe import TicTacToe, TTT_State, UTTT_State
+from tictactoe import TicTacToe, UltimateTicTacToe, TTT_State, UTTT_State
 from constants import *
 
 def main():
-    state = UTTT_State([TTT_State([], [], True) for i in range(8)]+ [TTT_State([1,3], [5,8], True)], [i for i in range(9)], force_valid=True)
+    # state = UTTT_State([TTT_State([], [], True) for i in range(8)]+ [TTT_State([1,3], [5,8], True)], [i for i in range(9)], force_valid=True)
+    # render(state)
+    env = UltimateTicTacToe()
+    state = env.init_posit
     render(state)
-    # while True:
-        
-    #     pass
-    # pass
+    turn = X
+    while True:
+        sg = input("Input Small Game: ")
+        cell = input("Input cell: ")
+        move = (int(sg), int(cell))
+        state = env.apply_move(state, move, turn)
+        render(state)
+        turn *= -1 
 
 def render(state: UTTT_State):
     small_games = state.small_games
