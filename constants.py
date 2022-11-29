@@ -2,6 +2,7 @@ import string
 
 X = 1
 O = -1
+EMPTY = 0
 DRAW = 0
 NO_WIN = 2
 
@@ -17,3 +18,5 @@ DIAGONAL = [[0, 4, 8], [2, 4, 6]]
 #  0   1   2
 #  3   4   5
 #  6   7   8
+
+# Actions

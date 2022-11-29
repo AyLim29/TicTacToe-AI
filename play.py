@@ -15,8 +15,18 @@ def main():
         state = env.apply_move(state, move, turn)
         render(state)
         turn *= -1 
+        win = env.check_win(state)
+        if win != NO_WIN:
+            if win == DRAW:
+                print("Game Drawed")
+            elif win == X:
+                print("X won")
+            elif win == O:
+                print("O won")
+            break
 
 def render(state: UTTT_State):
+    #TODO Render large X/O when small game is won
     small_games = state.small_games
     for game_row in range(3):
         for small_game_row in range(3):

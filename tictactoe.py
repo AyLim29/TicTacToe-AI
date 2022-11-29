@@ -64,6 +64,7 @@ class TicTacToe:
     
     def check_win(self, state: TTT_State) -> int:
         # Check if x_posit/ o_posit contains winning positions
+        #BUG FIX CHECK_WIN 
         for win_pos in HORIZONTAL + VERTICAL + DIAGONAL:
             if all(elem in state.x_posit for elem in win_pos):
                 return X
@@ -113,7 +114,7 @@ class UltimateTicTacToe:
                 pos_winner = self.TTT_env.check_win(small_games[pos])
                 if pos_winner != X:
                     win_X = False
-                elif pos_winner != O:
+                if pos_winner != O:
                     win_O = False
             
             if win_X == True:
@@ -138,9 +139,7 @@ class UltimateTicTacToe:
 if __name__ == "__main__":
     # ttt = TicTacToe()
     # print(["DRAW", "X", "NO_WIN", "O"][ttt.check_win(TTT_State([[(j, i) for j in range(3)] for i in range(3)][2], [(1,1)], X))])
-    
-    
-    
-    
-    pass
+    ttt = TicTacToe()
+    state = TTT_State([],[0,4,8])
+    print(["DRAW", "X", "NO_WIN", "O"][ttt.check_win(state)])
         
