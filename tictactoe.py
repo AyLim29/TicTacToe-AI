@@ -1,5 +1,8 @@
 from constants import *
 
+""" 
+The current state of the Tic Tac Toe game
+"""
 class TTT_State:
     def __init__(self, o_posit: list[int], x_posit: list[int], force_valid=True) -> None:
         if force_valid:
@@ -32,6 +35,9 @@ class TTT_State:
     def deepcopy(self):
         return TTT_State(self.o_posit, self.x_posit)
 
+"""
+The current state of the ultimate Tic Tac Toe game
+"""
 class UTTT_State:
     def __init__(self, small_games: list[TTT_State], valid_games: list, force_valid=True) -> None:
         # Assert small_games has 9 games
@@ -50,6 +56,9 @@ class UTTT_State:
     def deepcopy(self):
         return UTTT_State(self.small_games, self.valid_games)
 
+"""
+Controls the logic of the tic tac toe games
+"""
 class TicTacToe:
     def __init__(self):
         self.init_posit = TTT_State([], [])
@@ -76,11 +85,15 @@ class TicTacToe:
             return DRAW
         
         return NO_WIN
-    
+
+"""
+Controls the logic of the ultimate tic tac toe games
+"""
 class UltimateTicTacToe:
     def __init__(self) -> None:
         self.init_posit = UTTT_State([TTT_State([], [], True) for i in range(9)], [i for i in range(9)], force_valid=True)
         self.TTT_env = TicTacToe()
+        
     def apply_move(self, state: UTTT_State, move: tuple[int], turn) -> UTTT_State:
         # move: (small game index, move in small game)
         
@@ -94,7 +107,7 @@ class UltimateTicTacToe:
         
         new_valid_games = []
         # Check if the move results in a solved game 
-        if self.TTT_env.check_win(new_small_games[move[0]]) != NO_WIN:
+        if self.TTT_env.check_win(new_small_games[move[1]]) != NO_WIN:
             # Check which other small games it can go to::
             for i in range(9):
                 if self.TTT_env.check_win(new_small_games[i]) == NO_WIN:
@@ -132,7 +145,18 @@ class UltimateTicTacToe:
             return DRAW
         
         return NO_WIN
-                
+    
+    def check_valid_move(self, state: UTTT_State, move):
+        if move[0] not in range(9) or move[1] not in range(9):
+            return False
+        if move[0] not in state.valid_games:
+            return False
+        game = state.small_games[move[0]]
+        if move[1] in game.o_posit + game.x_posit:
+            return False
+        return True
+    
+
     
     
     
